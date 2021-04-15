@@ -1,0 +1,43 @@
+version: "3.8"
+services:
+   rabbit-01:
+    environment:
+      - TCP_PORTS=15672, 5672
+      - RABBITMQ_ERLANG_COOKIE="mycookie"  
+    networks:
+      - back
+    image:  rabbitmq:3.8.14
+    ports:
+      - 15672:15672
+      - 5672:5672
+      - 5671:5671
+      - 15671:15671
+    tty: true
+    volumes:
+      - ./conf/:/etc/rabbitmq/
+    command:  sh -c "sleep 10; rabbitmq-server;"
+   rabbit-02:
+    environment:
+      - TCP_PORTS=15672, 5672
+      - RABBITMQ_ERLANG_COOKIE="mycookie"
+    networks:
+      - back
+    image:  rabbitmq:3.8.14
+    tty: true
+    volumes:
+      - ./conf/:/etc/rabbitmq/
+    command:  sh -c "sleep 10; rabbitmq-server;"
+   etcd:
+     image: 'bitnami/etcd:latest'
+     environment:
+       - ALLOW_NONE_AUTHENTICATION=yes
+       - ETCD_ADVERTISE_CLIENT_URLS=http://etcd:2379
+     ports:
+       - 2379:2379
+       - 2380:2380
+     networks:
+       - back
+
+      
+networks:
+  back:
